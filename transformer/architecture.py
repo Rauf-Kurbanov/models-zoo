@@ -17,10 +17,10 @@ class EncoderDecoder(nn.Module):
         self.decode(self.encode(src, src_mask), src_mask, tgt, tgt_mask)
 
     def encode(self, src, src_mask):
-        pass
+        pass  # TODO
 
     def decode(self, memory, src_mask, tgt, tgt_mask):
-        pass
+        pass  # TODO
 
 
 class Generator(nn.Module):
