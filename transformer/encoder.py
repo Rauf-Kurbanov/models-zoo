@@ -1,11 +1,7 @@
-import copy
-
 from torch import nn
 from torch.nn import LayerNorm
 
-
-def clones(module, N):
-    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
+from transformer.utils import clones, SublayerConnection
 
 
 class Encoder(nn.Module):
@@ -19,17 +15,6 @@ class Encoder(nn.Module):
         for layer in self.layers:
             x = layer(x, mask)
         return self.norm(x)
-
-
-class SublayerConnection(nn.Module):
-
-    def __init__(self, size, dropout):
-        super(SublayerConnection, self).__init__()
-        self.norm = LayerNorm(size)
-        self.dropout = nn.Dropout(dropout)
-
-    def forward(self, x, sublayer):
-        return x + self.dropout(sublayer(self.norm(x)))
 
 
 class EncoderLayer(nn.Module):
