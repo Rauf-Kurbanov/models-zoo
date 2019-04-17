@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from torch import nn
 from torch.nn import LayerNorm
+import torch.nn.functional as F
 
 
 def clones(module, N):

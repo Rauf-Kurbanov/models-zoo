@@ -14,19 +14,16 @@ class LabelSmoothing(nn.Module):
         self.confidence = 1.0 - smoothing
         self.smoothing = smoothing
         self.size = size
-        self.true_dist = None
 
     def forward(self, x, target):
         assert x.size(1) == self.size
-        true_dist = x.data.clone().detach()
+        true_dist = torch.zeros_like(x.data)
         true_dist.fill_(self.smoothing / (self.size - 2))
         true_dist.scatter_(1, target.data.unsqueeze(1), self.confidence)
         true_dist[:, self.padding_idx] = 0
         mask = torch.nonzero(target.data == self.padding_idx)
         if mask.dim() > 0 and mask.nelement() > 0:
             true_dist.index_fill_(0, mask.squeeze(), 0.0)
-        self.true_dist = true_dist
-
         return self.criterion(x, true_dist)
 
 
@@ -44,7 +41,7 @@ def example_1():
     plt.show()
 
 
-def example_2_bad():
+def example_2():
     crit = LabelSmoothing(5, 0, 0.1, reduce=False)
 
     def loss(x):
@@ -57,7 +54,6 @@ def example_2_bad():
 
     xs = np.arange(1, 100)
     probs = xs / (xs + 3)
-    print(probs)
     ys = loss(xs)[:, 1]
     plt.plot(xs, ys.numpy())
     plt.plot(xs, probs)
@@ -65,17 +61,21 @@ def example_2_bad():
 
 
 def example_3():
-    crit = LabelSmoothing(5, 0, 0.1)
+    crit = LabelSmoothing(5, 0, 0.3)
 
     def loss(x):
         d = x + 3 * 1
         predict = torch.FloatTensor([[0, x / d, 1 / d, 1 / d, 1 / d],
                                      ])
         # print(predict)
-        return crit(predict.log(),
-                    torch.LongTensor([1])).data[0]
+        v = crit(predict.log(),
+                    torch.LongTensor([1]))
+        return v.data[0]
 
-    plt.plot(np.arange(1, 100), [loss(x) for x in range(1, 100)])
+    xs = np.arange(1, 100)
+    probs = xs / (xs + 3)
+    # plt.plot(xs, probs)
+    plt.plot(probs, [loss(x) for x in range(1, 100)])
     plt.show()
 
 

@@ -1,9 +1,9 @@
 import copy
 import time
 
-from torch import nn, Generator
+from torch import nn
 
-from transformer.architecture import EncoderDecoder
+from transformer.architecture import EncoderDecoder, Generator
 from transformer.attention import MultiHeadedAttention
 from transformer.decoder import Decoder, DecoderLayer
 from transformer.embeddings import PositionalEncoding, Embeddings
@@ -30,7 +30,8 @@ def make_model(src_vocab, tgt_vocab, N=6,
     # Initialize parameters with Glorot / fan_avg.
     for p in model.parameters():
         if p.dim() > 1:
-            nn.init.xavier_uniform(p)
+            # nn.init.xavier_uniform(p)
+            nn.init.xavier_uniform_(p)
     return model
 
 
@@ -48,11 +49,19 @@ def run_epoch(data_iter, model, loss_compute):
         tokens += batch.ntokens
         if i % 50 == 1:
             elapsed = time.time() - start
-            print(f"Epoch Step: {i} Loss: {loss / batch.ntokens}"
+            assert elapsed != 0
+            ntokens = batch.ntokens.float()
+            assert ntokens != 0
+            print(f"Epoch Step: {i} Loss: {loss / ntokens}"
                   f" Tokens per Sec: {tokens / elapsed}")
             start = time.time()
             tokens = 0
-    return total_loss / total_tokens
+    # return total_loss / total_tokens.float()  # TODO
+    assert total_tokens > 0
+    print("total_loss", total_loss)
+    print("total_tokens", total_tokens)
+    res = total_loss / total_tokens.float()
+    return res  # TODO
 
 
 global max_src_in_batch, max_tgt_in_batch

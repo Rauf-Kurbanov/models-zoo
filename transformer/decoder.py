@@ -14,7 +14,8 @@ class Decoder(nn.Module):
     def forward(self, x, memory, src_mask, tgt_mask):
         for layer in self.layers:
             x = layer(x, memory, src_mask, tgt_mask)
-        return self.norm(x)
+        normalised = self.norm(x)
+        return normalised
 
 
 class DecoderLayer(nn.Module):
