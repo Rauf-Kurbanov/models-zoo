@@ -6,6 +6,12 @@ from transformer.utils import PositionwiseFeedForward, SublayerConnection, clone
 
 
 class DecoderLayer(nn.Module):
+    size: int
+    self_attn: MultiHeadedAttention
+    src_attn: MultiHeadedAttention
+    feed_forward: PositionwiseFeedForward
+    sublayer: nn.ModuleList
+
     def __init__(
         self,
         size: int,
@@ -29,6 +35,9 @@ class DecoderLayer(nn.Module):
 
 
 class Decoder(nn.Module):
+    layers: nn.ModuleList
+    norm: LayerNorm
+
     def __init__(self, layer: DecoderLayer, n: int) -> None:
         super().__init__()
         self.layers = clones(layer, n)

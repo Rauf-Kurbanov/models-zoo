@@ -23,6 +23,12 @@ def attention(
 
 
 class MultiHeadedAttention(nn.Module):
+    d_k: int
+    h: int
+    linears: nn.ModuleList
+    attn: Optional[Tensor]
+    dropout: nn.Dropout
+
     def __init__(self, h: int, d_model: int, dropout: float = 0.1) -> None:
         super().__init__()
         assert d_model % h == 0

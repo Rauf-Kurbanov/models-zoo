@@ -24,6 +24,10 @@ def data_gen(v: int, batch: int, nbatches: int) -> Iterator[Batch]:  # TODO bad 
 class SimpleLossCompute:
     """A simple loss compute and train function."""
 
+    generator: Generator
+    criterion: nn.Module
+    opt: Optional[NoamOpt]
+
     def __init__(
         self, generator: Generator, criterion: nn.Module, opt: Optional[NoamOpt] = None
     ) -> None:  # TODO more general type for opt

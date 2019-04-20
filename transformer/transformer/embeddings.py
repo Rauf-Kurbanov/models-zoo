@@ -5,6 +5,9 @@ from torch import Tensor, nn
 
 
 class Embeddings(nn.Module):
+    lut: nn.Embedding
+    d_model: int
+
     def __init__(self, d_model: int, vocab: int) -> None:
         super(Embeddings, self).__init__()
         self.lut = nn.Embedding(vocab, d_model)
@@ -15,6 +18,9 @@ class Embeddings(nn.Module):
 
 
 class PositionalEncoding(nn.Module):  # TODO read again
+    dropout: nn.Dropout
+    pe: Tensor
+
     def __init__(self, d_model: int, dropout: float, max_len: int = 5000) -> None:
         super().__init__()
         self.dropout = nn.Dropout(p=dropout)

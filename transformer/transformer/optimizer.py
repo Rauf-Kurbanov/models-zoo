@@ -11,6 +11,13 @@ from transformer.architecture import EncoderDecoder
 class NoamOpt:
     """Optim wrapper that implements rate."""
 
+    optimizer: Optimizer
+    _step: int
+    warmup: int
+    factor: float
+    model_size: int
+    _rate: float
+
     def __init__(self, model_size: int, factor: float, warmup: int, optimizer: Optimizer) -> None:
         self.optimizer = optimizer
         self._step = 0

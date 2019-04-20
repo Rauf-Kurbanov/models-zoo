@@ -23,6 +23,9 @@ def subsequent_mask(size: int) -> Tensor:
 
 
 class SublayerConnection(nn.Module):
+    norm: LayerNorm
+    dropout: nn.Dropout
+
     def __init__(self, size: int, dropout: float) -> None:
         super(SublayerConnection, self).__init__()
         self.norm = LayerNorm(size)
@@ -33,6 +36,10 @@ class SublayerConnection(nn.Module):
 
 
 class PositionwiseFeedForward(nn.Module):
+    w_1: nn.Linear
+    w_2: nn.Linear
+    dropout: nn.Dropout
+
     def __init__(self, d_model: int, d_ff: int, dropout: float = 0.1) -> None:
         super().__init__()
         self.w_1 = nn.Linear(d_model, d_ff)
@@ -45,6 +52,13 @@ class PositionwiseFeedForward(nn.Module):
 
 class Batch:
     """Object for holding a batch of data with mask during training."""
+
+    src: Tensor
+    src_mask: Tensor
+    trg: Optional[Tensor]
+    trg_y: Tensor
+    trg_mask: Tensor
+    ntokens: Tensor
 
     def __init__(self, src: Tensor, trg: Optional[Tensor] = None, pad: int = 0) -> None:
         self.src = src

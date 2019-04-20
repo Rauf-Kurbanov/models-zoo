@@ -6,6 +6,11 @@ from transformer.utils import PositionwiseFeedForward, SublayerConnection, clone
 
 
 class EncoderLayer(nn.Module):
+    self_attn: MultiHeadedAttention
+    feed_forward: PositionwiseFeedForward
+    sublayer: nn.ModuleList
+    size: int
+
     def __init__(
         self, size: int, self_attn: MultiHeadedAttention, feed_forward: PositionwiseFeedForward, dropout: float
     ) -> None:
@@ -21,7 +26,10 @@ class EncoderLayer(nn.Module):
 
 
 class Encoder(nn.Module):
-    def __init__(self, layer: EncoderLayer, n: int) -> None:  # TODO type
+    layers: nn.ModuleList
+    norm: LayerNorm
+
+    def __init__(self, layer: EncoderLayer, n: int) -> None:
         super().__init__()
         self.layers = clones(layer, n)
         self.norm = LayerNorm(layer.size)

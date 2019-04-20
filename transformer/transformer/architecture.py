@@ -6,6 +6,8 @@ from transformer.encoder import Encoder
 
 
 class Generator(nn.Module):
+    proj: nn.Linear
+
     def __init__(self, d_model: int, vocab: int) -> None:  # TODO bad names
         super().__init__()
         self.proj = nn.Linear(d_model, vocab)
