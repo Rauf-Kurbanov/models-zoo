@@ -32,7 +32,6 @@ def make_model(
     # Initialize parameters with Glorot / fan_avg.
     for p in model.parameters():
         if p.dim() > 1:
-            # nn.init.xavier_uniform(p)
             nn.init.xavier_uniform_(p)
     return model
 
@@ -41,9 +40,9 @@ def run_epoch(
     data_iter: Iterator[Batch], model: EncoderDecoder, loss_compute: Callable[[Tensor, Tensor, Tensor], Tensor]
 ) -> Tensor:  # TODO SimpleLossCompute really ?
     start = time.time()
-    total_tokens = 0
+    total_tokens = tensor(0)
     total_loss = tensor(0.0)
-    tokens = 0
+    tokens = tensor(0)
     for i, batch in enumerate(data_iter):
         out = model.forward(batch.src, batch.trg, batch.src_mask, batch.trg_mask)
         loss = loss_compute(out, batch.trg_y, batch.ntokens)
@@ -52,18 +51,15 @@ def run_epoch(
         tokens += batch.ntokens
         if i % 50 == 1:
             elapsed = time.time() - start
-            assert elapsed != 0
             ntokens = batch.ntokens.float()
-            assert ntokens != 0
-            print(f"Epoch Step: {i} Loss: {loss / ntokens}" f" Tokens per Sec: {tokens / elapsed}")
+            print(f"Epoch Step: {i} Loss: {loss / ntokens}" f" Tokens per Sec: {tokens.float() / elapsed}")
             start = time.time()
             tokens = 0
-    # return total_loss / total_tokens.float()  # TODO
     assert total_tokens > 0
+    print("total_tokens > 0", total_tokens > 0)
     print("total_loss", total_loss)
     print("total_tokens", total_tokens)
-    # res = total_loss / total_tokens.float()
-    res = total_loss / total_tokens
+    res = total_loss / total_tokens.float()
     return res  # TODO
 
 

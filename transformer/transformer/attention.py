@@ -1,5 +1,5 @@
 import math
-from typing import Optional
+from typing import Optional, Tuple
 
 import torch
 import torch.nn.functional as F
@@ -11,7 +11,7 @@ from transformer.utils import clones
 
 def attention(
     query: Tensor, key: Tensor, value: Tensor, mask: Optional[Tensor] = None, dropout: Optional[Dropout] = None
-) -> Tensor:
+) -> Tuple[Tensor, Tensor]:
     d_k = query.size(-1)
     scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(d_k)
     if mask is not None:
