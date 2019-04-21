@@ -33,7 +33,6 @@ class EncoderDecoder(nn.Module):
         generator: Generator,
     ) -> None:
         super().__init__()
-
         self._encoder = encoder
         self._decoder = decoder
         self.src_embed = src_embed

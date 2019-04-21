@@ -2,6 +2,7 @@ import copy
 import time
 from typing import Callable, Iterator
 
+import torch
 from torch import Tensor, nn, tensor
 
 from transformer.architecture import EncoderDecoder, Generator
@@ -13,7 +14,14 @@ from transformer.utils import Batch, PositionwiseFeedForward
 
 
 def make_model(
-    src_vocab: int, tgt_vocab: int, n: int = 6, d_model: int = 512, d_ff: int = 2048, h: int = 8, dropout: float = 0.1
+    src_vocab: int,
+    tgt_vocab: int,
+    n: int = 6,
+    d_model: int = 512,
+    d_ff: int = 2048,
+    h: int = 8,
+    dropout: float = 0.1,
+    device: torch.device = torch.device("cpu"),
 ) -> EncoderDecoder:
     """Helper: Construct a model from hyperparameters."""
     c = copy.deepcopy
@@ -26,7 +34,7 @@ def make_model(
         nn.Sequential(Embeddings(d_model, src_vocab), c(position)),
         nn.Sequential(Embeddings(d_model, tgt_vocab), c(position)),
         Generator(d_model, tgt_vocab),
-    )
+    ).to(device)
 
     # This was important from their code.
     # Initialize parameters with Glorot / fan_avg.
@@ -56,9 +64,6 @@ def run_epoch(
             start = time.time()
             tokens = 0
     assert total_tokens > 0
-    print("total_tokens > 0", total_tokens > 0)
-    print("total_loss", total_loss)
-    print("total_tokens", total_tokens)
     res = total_loss / total_tokens.float()
     return res  # TODO
 
